@@ -23,6 +23,6 @@
     "lithium.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.4.0"
+    "fabricloader": ">=0.7.0"
   }
 }

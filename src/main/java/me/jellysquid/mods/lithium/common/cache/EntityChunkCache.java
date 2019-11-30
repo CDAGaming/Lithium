@@ -19,7 +19,6 @@ import net.minecraft.world.chunk.WorldChunk;
  * Maintains a cached collection of chunks around an entity. This allows for much faster access to nearby chunks for
  * many entity related functions.
  */
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class EntityChunkCache extends AbstractCachedAccess {
     private final Long2ObjectMap<WorldChunk> chunks = new Long2ObjectOpenHashMap<>(9);
 
@@ -60,8 +59,8 @@ public class EntityChunkCache extends AbstractCachedAccess {
 
         this.chunks.clear();
 
-        for (int i = 0; i < this.mra.length; i++) {
-            this.mra[i].reset();
+        for (CachedEntry<WorldChunk> worldChunkCachedEntry : this.mra) {
+            worldChunkCachedEntry.reset();
         }
 
         for (int x = minX; x < maxX; x++) {
@@ -129,9 +128,9 @@ public class EntityChunkCache extends AbstractCachedAccess {
         if (this.chunks.size() > 0) {
             long key = ChunkPos.toLong(x, z);
 
-            for (int i = 0; i < this.mra.length; i++) {
-                if (this.mra[i].pos == key) {
-                    return this.mra[i].obj;
+            for (CachedEntry<WorldChunk> worldChunkCachedEntry : this.mra) {
+                if (worldChunkCachedEntry.pos == key) {
+                    return worldChunkCachedEntry.obj;
                 }
             }
 

@@ -92,6 +92,7 @@ public abstract class MixinPalettedContainer<T> implements LithiumPaletteResizeL
      * Replaces the hash palette from vanilla with our own. This also adjusts the minimum size before it's used to only
      * 3 bits.
      *
+     * @reason To replace the hash palette from vanilla with our own.
      * @author JellySquid
      */
     @SuppressWarnings({"unchecked", "ConstantConditions"})

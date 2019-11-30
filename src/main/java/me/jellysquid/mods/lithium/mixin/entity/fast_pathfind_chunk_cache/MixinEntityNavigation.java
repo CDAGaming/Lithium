@@ -49,6 +49,7 @@ public abstract class MixinEntityNavigation {
      * <p>
      * TODO: Avoid the Overwrite here.
      *
+     * @reason Optimized implementation in comparison to vanilla.
      * @author JellySquid
      */
     @SuppressWarnings("OverwriteModifiers")

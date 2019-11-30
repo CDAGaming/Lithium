@@ -37,6 +37,7 @@ public interface MixinViewableWorld {
      * fallback to the vanilla algo. This provides a massive improvement in some situations, such as ticking items on
      * the ground.
      *
+     * @reason Uses a simpler and more efficient collision detection algo then vanilla.
      * @author JellySquid
      */
     @Overwrite

@@ -58,6 +58,7 @@ public abstract class MixinCuboid {
     /**
      * Reduces the number of matrix operations by combining translations or avoiding them all together.
      *
+     * @reason Reduce the number of matrix operations the game undergoes.
      * @author JellySquid
      */
     @Overwrite

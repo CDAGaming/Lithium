@@ -42,6 +42,7 @@ public abstract class MixinDataTracker {
     /**
      * Avoid integer boxing/unboxing and locking.
      *
+     * @reason Avoids unnecessary integer boxing, unboxing, and locking.
      * @author JellySquid
      */
     @Overwrite

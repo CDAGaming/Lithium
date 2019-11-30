@@ -36,6 +36,7 @@ public class MixinTag<T> {
      * Makes use of the small values array for quicker indexing if the number of elements is small. This can improve
      * tag matching performance significantly for tags with only one or two objects.
      *
+     * @reason Allows for quicker indexing over vanilla.
      * @author JellySquid
      */
     @Overwrite

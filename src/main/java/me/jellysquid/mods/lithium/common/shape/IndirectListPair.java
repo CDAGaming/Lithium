@@ -25,37 +25,30 @@ public final class IndirectListPair extends DoubleListPair {
         this.count = 0;
     }
 
+    public double[] getContents(DoubleList list) {
+        double[] araw;
+
+        if (list instanceof DoubleArrayList) {
+            araw = ((DoubleArrayList) list).elements();
+        } else if (list instanceof PrecomputedFractionalDoubleList) {
+            araw = ((PrecomputedFractionalDoubleList) list).items;
+        } else {
+            araw = new double[list.size()];
+
+            for (int i = 0; i < list.size(); i++) {
+                araw[i] = list.getDouble(i);
+            }
+        }
+
+        return araw;
+    }
+
     public void initBest(DoubleList a, DoubleList b, boolean flag1, boolean flag2) {
         if (a instanceof DoubleArrayList && b instanceof DoubleArrayList) {
             this.init(((DoubleArrayList) a).elements(), ((DoubleArrayList) b).elements(), a.size(), b.size(), flag1, flag2);
         } else {
-            double[] araw;
-
-            if (a instanceof DoubleArrayList) {
-                araw = ((DoubleArrayList) a).elements();
-            } else if (a instanceof PrecomputedFractionalDoubleList) {
-                araw = ((PrecomputedFractionalDoubleList) a).items;
-            } else {
-                araw = new double[a.size()];
-
-                for (int i = 0; i < a.size(); i++) {
-                    araw[i] = a.getDouble(i);
-                }
-            }
-
-            double[] braw;
-
-            if (b instanceof DoubleArrayList) {
-                braw = ((DoubleArrayList) b).elements();
-            } else if (b instanceof PrecomputedFractionalDoubleList) {
-                braw = ((PrecomputedFractionalDoubleList) b).items;
-            } else {
-                braw = new double[b.size()];
-
-                for (int i = 0; i < b.size(); i++) {
-                    braw[i] = b.getDouble(i);
-                }
-            }
+            double[] araw = getContents(a);
+            double[] braw = getContents(b);
 
             this.init(araw, braw, a.size(), b.size(), flag1, flag2);
         }

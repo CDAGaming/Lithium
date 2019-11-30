@@ -27,6 +27,7 @@ public class MixinSimpleVoxelShape {
     }
 
     /**
+     * @reason Avoids unneeded callings
      * @author JellySquid
      */
     @Overwrite

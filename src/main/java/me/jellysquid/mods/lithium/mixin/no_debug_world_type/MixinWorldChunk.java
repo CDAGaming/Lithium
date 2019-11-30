@@ -24,6 +24,7 @@ public class MixinWorldChunk {
      * <p>
      * TODO: Can we implement this without an Overwrite?
      *
+     * @reason Removes a bunch of unneeded checks.
      * @author JellySquid
      */
     @Overwrite
@@ -52,9 +53,7 @@ public class MixinWorldChunk {
     private static CrashException onGetBlockStateException(Throwable cause, int x, int y, int z) {
         CrashReport crashReport_1 = CrashReport.create(cause, "Getting block state");
         CrashReportSection crashReportSection_1 = crashReport_1.addElement("Block being got");
-        crashReportSection_1.add("Location", () -> {
-            return CrashReportSection.createPositionString(x, y, z);
-        });
+        crashReportSection_1.add("Location", () -> CrashReportSection.createPositionString(x, y, z));
         return new CrashException(crashReport_1);
     }
 }

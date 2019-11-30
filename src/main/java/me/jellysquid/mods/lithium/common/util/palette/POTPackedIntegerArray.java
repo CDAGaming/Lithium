@@ -46,8 +46,7 @@ public class POTPackedIntegerArray extends PackedIntegerArray {
         return (count + entriesPerWord - 1) / entriesPerWord;
     }
 
-    @Override
-    public int setAndGetOldValue(int idx, int value) {
+    public int setOrGetOldValue(int idx, int value, boolean getValue) {
         final int wordIdx = idx >>> this.wordIdxShift;
         final int bitIdx = (idx & this.bitIdxMask) << this.bitIdxShift;
 
@@ -59,21 +58,17 @@ public class POTPackedIntegerArray extends PackedIntegerArray {
 
         this.storage[wordIdx] = otherBits | thisBits;
 
-        return (int) (word >>> bitIdx & this.maxValue);
+        return getValue ? (int) (word >>> bitIdx & this.maxValue) : 0;
+    }
+
+    @Override
+    public int setAndGetOldValue(int idx, int value) {
+        return setOrGetOldValue(idx, value, true);
     }
 
     @Override
     public void set(int idx, int value) {
-        final int wordIdx = idx >>> this.wordIdxShift;
-        final int bitIdx = (idx & this.bitIdxMask) << this.bitIdxShift;
-
-        final long word = this.storage[wordIdx];
-        final long wordMask = ~(this.maxValue << bitIdx);
-
-        final long otherBits = word & wordMask;
-        final long thisBits = ((long) value & this.maxValue) << bitIdx;
-
-        this.storage[wordIdx] = otherBits | thisBits;
+        setOrGetOldValue(idx, value, false);
     }
 
     @Override

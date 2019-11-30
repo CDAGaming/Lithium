@@ -62,6 +62,7 @@ public abstract class MixinEntity implements ExtendedEntity {
     /**
      * Use the chunk cache.
      *
+     * @reason Use the more effective chunk cache.
      * @author JellySquid
      */
     @Overwrite
@@ -88,6 +89,7 @@ public abstract class MixinEntity implements ExtendedEntity {
     /**
      * Use the chunk cache.
      *
+     * @reason Use the more effective chunk cache.
      * @author JellySquid
      */
     @Overwrite

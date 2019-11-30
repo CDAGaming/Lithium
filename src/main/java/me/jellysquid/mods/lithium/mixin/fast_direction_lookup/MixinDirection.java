@@ -19,6 +19,7 @@ public class MixinDirection {
     /**
      * Avoid the modulo/abs operations.
      *
+     * @reason Avoids the unneeded modulo/abs operations from vanilla.
      * @author JellySquid
      */
     @Overwrite

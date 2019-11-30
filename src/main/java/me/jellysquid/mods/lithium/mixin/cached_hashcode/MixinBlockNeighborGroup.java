@@ -39,6 +39,7 @@ public class MixinBlockNeighborGroup {
     /**
      * Uses the stored hashcode.
      *
+     * @reason Uses the stored hashcode instead of vanilla's.
      * @author JellySquid
      */
     @Overwrite

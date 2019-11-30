@@ -33,6 +33,7 @@ public class MixinFontStorage {
     /**
      * Avoids unnecessary allocations.
      *
+     * @reason Avoids unnecessary allocations from vanilla.
      * @author JellySquid
      */
     @Overwrite

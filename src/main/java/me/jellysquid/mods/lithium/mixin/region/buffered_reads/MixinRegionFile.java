@@ -84,6 +84,7 @@ public abstract class MixinRegionFile {
      * the game will simply generate a new chunk, likely overwriting the unreadable one. Perhaps someone should make
      * these checks fail with an exception...
      *
+     * @reason Re-Implementation from Vanilla to avoid a lot of checks.
      * @author JellySquid
      */
     @SuppressWarnings("OverwriteModifiers")
