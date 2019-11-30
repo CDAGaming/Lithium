@@ -33,9 +33,6 @@ public abstract class MixinRegionFile {
     @Final
     private List<Boolean> sectorFree;
 
-    @Shadow
-    protected abstract int getOffset(ChunkPos pos);
-
     /**
      * Prevents any reading from taking place, short-circuiting two loops.
      */
@@ -45,6 +42,9 @@ public abstract class MixinRegionFile {
     private static int modifyInitField(int unused) {
         return 0;
     }
+
+    @Shadow
+    protected abstract int getOffset(ChunkPos pos);
 
     /**
      * Perform the read initialization we canceled just prior, but this time with one large buffered read. This makes it

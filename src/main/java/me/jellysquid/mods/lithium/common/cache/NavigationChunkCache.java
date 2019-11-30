@@ -85,6 +85,14 @@ public class NavigationChunkCache implements ViewableWorld {
         }
     }
 
+    private static int indexChunk(int x, int z) {
+        return x * z;
+    }
+
+    private static int indexSection(int x, int y, int z) {
+        return (x * z * 16) + y;
+    }
+
     public int getLightLevel(BlockPos pos, int int_1) {
         return this.world.getLightLevel(pos, int_1);
     }
@@ -175,14 +183,6 @@ public class NavigationChunkCache implements ViewableWorld {
 
     public int getLightLevel(LightType type, BlockPos pos) {
         return this.world.getLightLevel(type, pos);
-    }
-
-    private static int indexChunk(int x, int z) {
-        return x * z;
-    }
-
-    private static int indexSection(int x, int y, int z) {
-        return (x * z * 16) + y;
     }
 
 }

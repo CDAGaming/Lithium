@@ -10,6 +10,56 @@ import java.io.IOException;
 
 @SuppressWarnings("CanBeFinal")
 public class LithiumConfig {
+    private static final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
+    public GeneralConfig general = new GeneralConfig();
+    public PhysicsConfig physics = new PhysicsConfig();
+    public EntityConfig entity = new EntityConfig();
+    public ChunkConfig chunk = new ChunkConfig();
+    public ClientConfig client = new ClientConfig();
+    public OtherConfig other = new OtherConfig();
+    public RegionConfig region = new RegionConfig();
+
+    /**
+     * Loads the configuration file from the specified location. If it does not exist, a new configuration file will be
+     * created. The file on disk will then be updated to include any new options.
+     */
+    public static LithiumConfig load(File file) {
+        LithiumConfig config;
+
+        if (!file.exists()) {
+            config = new LithiumConfig();
+        } else {
+            try (FileReader in = new FileReader(file)) {
+                config = gson.fromJson(in, LithiumConfig.class);
+            } catch (IOException e) {
+                throw new RuntimeException("Couldn't load config", e);
+            }
+        }
+
+        config.save(file);
+
+        return config;
+    }
+
+    /**
+     * Saves the configuration file to disk, creating any directories as needed.
+     */
+    private void save(File file) {
+        File parent = file.getParentFile();
+
+        if (!parent.exists() && !parent.mkdirs()) {
+            throw new RuntimeException("Couldn't create config directory");
+        }
+
+        try (FileWriter writer = new FileWriter(file)) {
+            gson.toJson(this, writer);
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't save config");
+        }
+    }
+
     public static class PhysicsConfig {
         /**
          * If true, the code responsible for merging vertices when resolving collision models will be replaced with a faster
@@ -202,56 +252,5 @@ public class LithiumConfig {
          * improve performance when checking to see if a block/fluid is contained within a tag.
          */
         public boolean useSmallTagArrayOptimization = true;
-    }
-
-    private static final Gson gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .create();
-
-    public GeneralConfig general = new GeneralConfig();
-    public PhysicsConfig physics = new PhysicsConfig();
-    public EntityConfig entity = new EntityConfig();
-    public ChunkConfig chunk = new ChunkConfig();
-    public ClientConfig client = new ClientConfig();
-    public OtherConfig other = new OtherConfig();
-    public RegionConfig region = new RegionConfig();
-
-    /**
-     * Loads the configuration file from the specified location. If it does not exist, a new configuration file will be
-     * created. The file on disk will then be updated to include any new options.
-     */
-    public static LithiumConfig load(File file) {
-        LithiumConfig config;
-
-        if (!file.exists()) {
-            config = new LithiumConfig();
-        } else {
-            try (FileReader in = new FileReader(file)) {
-                config = gson.fromJson(in, LithiumConfig.class);
-            } catch (IOException e) {
-                throw new RuntimeException("Couldn't load config", e);
-            }
-        }
-
-        config.save(file);
-
-        return config;
-    }
-
-    /**
-     * Saves the configuration file to disk, creating any directories as needed.
-     */
-    private void save(File file) {
-        File parent = file.getParentFile();
-
-        if (!parent.exists() && !parent.mkdirs()) {
-            throw new RuntimeException("Couldn't create config directory");
-        }
-
-        try (FileWriter writer = new FileWriter(file)) {
-            gson.toJson(this, writer);
-        } catch (IOException e) {
-            throw new RuntimeException("Couldn't save config");
-        }
     }
 }

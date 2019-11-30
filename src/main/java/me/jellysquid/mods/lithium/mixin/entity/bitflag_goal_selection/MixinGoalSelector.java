@@ -17,25 +17,20 @@ import java.util.Set;
 public abstract class MixinGoalSelector {
     @Shadow
     @Final
+    private static WeightedGoal activeGoal;
+    @Shadow
+    @Final
     private Profiler profiler;
-
     @Shadow
     @Final
     private Map<Goal.Control, WeightedGoal> goalsByControl;
-
     @Shadow
     @Final
     private EnumSet<Goal.Control> disabledControls;
-
     private int disabledControlsBitFlag;
-
     @Shadow
     @Final
     private Set<WeightedGoal> goals;
-
-    @Shadow
-    @Final
-    private static WeightedGoal activeGoal;
 
     /**
      * This method originally allocates a ton of objects due to the use of lambdas and streams. It also isn't

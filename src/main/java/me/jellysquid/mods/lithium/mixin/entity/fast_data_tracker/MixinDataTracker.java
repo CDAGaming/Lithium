@@ -25,6 +25,15 @@ public abstract class MixinDataTracker {
     // Immutable! Updates must replace the variable. TODO: Replace with immutable map type
     private volatile Int2ObjectOpenHashMap<DataTracker.Entry<?>> entriesVolatile = new Int2ObjectOpenHashMap<>();
 
+    private static <T> CrashException onGetException(Throwable cause, TrackedData<T> data) {
+        CrashReport report = CrashReport.create(cause, "Getting synced entity data");
+
+        CrashReportSection section = report.addElement("Synced entity data");
+        section.add("Data ID", data);
+
+        return new CrashException(report);
+    }
+
     /**
      * We redirect the call to add a tracked data to the internal map so we can add it to our own, faster map. The
      * map field is never mutated in-place so we can avoid expensive locking, but this might hurt for memory allocations...
@@ -54,14 +63,5 @@ public abstract class MixinDataTracker {
             // Move to another method so this function can be in-lined better
             throw onGetException(cause, data);
         }
-    }
-
-    private static <T> CrashException onGetException(Throwable cause, TrackedData<T> data) {
-        CrashReport report = CrashReport.create(cause, "Getting synced entity data");
-
-        CrashReportSection section = report.addElement("Synced entity data");
-        section.add("Data ID", data);
-
-        return new CrashException(report);
     }
 }

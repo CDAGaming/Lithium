@@ -23,6 +23,15 @@ import java.util.function.Consumer;
 class ScheduledTickMap<T> {
     private final Long2ObjectSortedMap<UpdateTimeIndex<T>> activeTicksByTime = new Long2ObjectAVLTreeMap<>();
     private final Map<ScheduledTick<T>, Mut<T>> scheduled = new HashMap<>();
+    private final ArrayList<UpdateList<T>> updating = new ArrayList<>();
+
+    private static long getChunkKey(BlockPos pos) {
+        return ChunkPos.toLong(pos.getX() >> 4, pos.getZ() >> 4);
+    }
+
+    private static long getTimeKey(long time, TaskPriority priority) {
+        return (time << 4L) | (priority.ordinal() & 15);
+    }
 
     void addScheduledTick(ScheduledTick<T> tick) {
         Mut<T> mut = this.scheduled.computeIfAbsent(tick, Mut::new);
@@ -38,18 +47,10 @@ class ScheduledTickMap<T> {
         idx.add(mut);
     }
 
-    private static long getChunkKey(BlockPos pos) {
-        return ChunkPos.toLong(pos.getX() >> 4, pos.getZ() >> 4);
-    }
-
     boolean getScheduledTickStatus(BlockPos pos, T obj, boolean executing) {
         Mut<T> index = this.scheduled.get(new ScheduledTick<>(pos, obj));
 
         return index != null && index.status == (executing ? Status.EXECUTING : Status.SCHEDULED);
-    }
-
-    private static long getTimeKey(long time, TaskPriority priority) {
-        return (time << 4L) | (priority.ordinal() & 15);
     }
 
     Iterator<UpdateList<T>> getTicksForChunk(long chunk) {
@@ -64,8 +65,6 @@ class ScheduledTickMap<T> {
     Iterable<Mut<T>> getAllTicks() {
         return Iterables.concat(this.scheduled.values());
     }
-
-    private final ArrayList<UpdateList<T>> updating = new ArrayList<>();
 
     void cleanup(ServerChunkManager chunks, long time) {
         final BlockPos.Mutable pos = new BlockPos.Mutable();
@@ -132,6 +131,16 @@ class ScheduledTickMap<T> {
         return count;
     }
 
+    void removeTick(ScheduledTick<T> tick) {
+        this.scheduled.remove(tick);
+    }
+
+    enum Status {
+        SCHEDULED,
+        EXECUTING,
+        CONSUMED
+    }
+
     private static class UpdateTimeIndex<T> extends Long2ObjectOpenHashMap<UpdateList<T>> {
         private final long key;
 
@@ -148,12 +157,6 @@ class ScheduledTickMap<T> {
         }
     }
 
-    enum Status {
-        SCHEDULED,
-        EXECUTING,
-        CONSUMED
-    }
-
     static class Mut<T> {
         final ScheduledTick<T> tick;
 
@@ -162,9 +165,5 @@ class ScheduledTickMap<T> {
         private Mut(ScheduledTick<T> tick) {
             this.tick = tick;
         }
-    }
-
-    void removeTick(ScheduledTick<T> tick) {
-        this.scheduled.remove(tick);
     }
 }

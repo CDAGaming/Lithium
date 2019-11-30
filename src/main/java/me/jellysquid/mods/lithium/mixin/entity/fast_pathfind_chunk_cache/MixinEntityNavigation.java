@@ -20,28 +20,23 @@ public abstract class MixinEntityNavigation {
     @Shadow
     @Final
     protected MobEntity entity;
+    @Shadow
+    protected Path currentPath;
+    @Shadow
+    @Final
+    protected World world;
+    @Shadow
+    private PathNodeNavigator pathNodeNavigator;
+    @Shadow
+    private BlockPos field_20293;
+    @Shadow
+    private int field_20294;
 
     @Shadow
     protected abstract boolean isAtValidPosition();
 
     @Shadow
-    protected Path currentPath;
-
-    @Shadow
-    @Final
-    protected World world;
-
-    @Shadow
     public abstract float getFollowRange();
-
-    @Shadow
-    private PathNodeNavigator pathNodeNavigator;
-
-    @Shadow
-    private BlockPos field_20293;
-
-    @Shadow
-    private int field_20294;
 
     /**
      * We can't replace the creation of ChunkCache because the return type is different (although it still implements

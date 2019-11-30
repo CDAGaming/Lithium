@@ -15,40 +15,28 @@ public abstract class MixinCuboid {
 
     @Shadow
     public boolean visible;
-
-    @Shadow
-    private boolean compiled;
-
     @Shadow
     public float x;
-
     @Shadow
     public float y;
-
     @Shadow
     public float z;
-
     @Shadow
     public float pitch;
-
     @Shadow
     public float yaw;
-
     @Shadow
     public float roll;
-
     @Shadow
     public float rotationPointX;
-
     @Shadow
     public float rotationPointY;
-
     @Shadow
     public float rotationPointZ;
-
     @Shadow
     public List<Cuboid> children;
-
+    @Shadow
+    private boolean compiled;
     @Shadow
     private int list;
 

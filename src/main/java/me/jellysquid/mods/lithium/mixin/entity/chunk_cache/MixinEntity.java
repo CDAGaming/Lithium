@@ -29,9 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
 public abstract class MixinEntity implements ExtendedEntity {
-    @Shadow
-    public abstract Entity getVehicle();
-
+    private final BlockPos.Mutable scratchPos = new BlockPos.Mutable();
     @Shadow
     public World world;
 
@@ -43,6 +41,54 @@ public abstract class MixinEntity implements ExtendedEntity {
 
     @Shadow
     public double z;
+    private EntityChunkCache chunkCache;
+
+    @Redirect(method = "calculateMotionVector", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;calculateTangentialMotionVector(Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Box;Lnet/minecraft/world/ViewableWorld;Lnet/minecraft/entity/EntityContext;Lnet/minecraft/util/ReusableStream;)Lnet/minecraft/util/math/Vec3d;"))
+    private static Vec3d redirectCalculateTangentialMotionVector(Vec3d vec, Box box, ViewableWorld world, EntityContext context, ReusableStream<VoxelShape> reusableStream, Entity entity, Vec3d dup0, Box dup1, World dup3, EntityContext dup4, ReusableStream<VoxelShape> dup5) {
+        if (entity == null) {
+            return Entity.calculateTangentialMotionVector(vec, box, world, context, reusableStream);
+        }
+
+        EntityChunkCache chunkCache = ((ExtendedEntity) entity).getEntityChunkCache();
+
+        double x = vec.x;
+        double y = vec.y;
+        double z = vec.z;
+
+        if (y != 0.0D) {
+            y = LithiumVoxelShapes.calculateSoftOffset(Direction.Axis.Y, box, chunkCache, y, context, reusableStream.stream());
+
+            if (y != 0.0D) {
+                box = box.offset(0.0D, y, 0.0D);
+            }
+        }
+
+        boolean boolean_1 = Math.abs(x) < Math.abs(z);
+        if (boolean_1 && z != 0.0D) {
+            z = LithiumVoxelShapes.calculateSoftOffset(Direction.Axis.Z, box, chunkCache, z, context, reusableStream.stream());
+
+            if (z != 0.0D) {
+                box = box.offset(0.0D, 0.0D, z);
+            }
+        }
+
+        if (x != 0.0D) {
+            x = LithiumVoxelShapes.calculateSoftOffset(Direction.Axis.X, box, chunkCache, x, context, reusableStream.stream());
+
+            if (!boolean_1 && x != 0.0D) {
+                box = box.offset(x, 0.0D, 0.0D);
+            }
+        }
+
+        if (!boolean_1 && z != 0.0D) {
+            z = LithiumVoxelShapes.calculateSoftOffset(Direction.Axis.Z, box, chunkCache, z, context, reusableStream.stream());
+        }
+
+        return new Vec3d(x, y, z);
+    }
+
+    @Shadow
+    public abstract Entity getVehicle();
 
     @Shadow
     public abstract float getStandingEyeHeight();
@@ -50,14 +96,10 @@ public abstract class MixinEntity implements ExtendedEntity {
     @Shadow
     public abstract Box getBoundingBox();
 
-    private EntityChunkCache chunkCache;
-
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onConstructed(EntityType<?> type, World world, CallbackInfo ci) {
         this.chunkCache = new EntityChunkCache(this.world);
     }
-
-    private final BlockPos.Mutable scratchPos = new BlockPos.Mutable();
 
     /**
      * Use the chunk cache.
@@ -123,7 +165,6 @@ public abstract class MixinEntity implements ExtendedEntity {
         return this.chunkCache;
     }
 
-
     @Redirect(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;doesAreaContainFireSource(Lnet/minecraft/util/math/Box;)Z"))
     private boolean redirectDoesAreaContainFireSource(World world, Box box_1) {
         int minX = MathHelper.floor(box_1.minX);
@@ -146,50 +187,6 @@ public abstract class MixinEntity implements ExtendedEntity {
         }
 
         return false;
-    }
-
-    @Redirect(method = "calculateMotionVector", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;calculateTangentialMotionVector(Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Box;Lnet/minecraft/world/ViewableWorld;Lnet/minecraft/entity/EntityContext;Lnet/minecraft/util/ReusableStream;)Lnet/minecraft/util/math/Vec3d;"))
-    private static Vec3d redirectCalculateTangentialMotionVector(Vec3d vec, Box box, ViewableWorld world, EntityContext context, ReusableStream<VoxelShape> reusableStream, Entity entity, Vec3d dup0, Box dup1, World dup3, EntityContext dup4, ReusableStream<VoxelShape> dup5) {
-        if (entity == null) {
-            return Entity.calculateTangentialMotionVector(vec, box, world, context, reusableStream);
-        }
-
-        EntityChunkCache chunkCache = ((ExtendedEntity) entity).getEntityChunkCache();
-
-        double x = vec.x;
-        double y = vec.y;
-        double z = vec.z;
-
-        if (y != 0.0D) {
-            y = LithiumVoxelShapes.calculateSoftOffset(Direction.Axis.Y, box, chunkCache, y, context, reusableStream.stream());
-
-            if (y != 0.0D) {
-                box = box.offset(0.0D, y, 0.0D);
-            }
-        }
-
-        boolean boolean_1 = Math.abs(x) < Math.abs(z);
-        if (boolean_1 && z != 0.0D) {
-            z = LithiumVoxelShapes.calculateSoftOffset(Direction.Axis.Z, box, chunkCache, z, context, reusableStream.stream());
-
-            if (z != 0.0D) {
-                box = box.offset(0.0D, 0.0D, z);
-            }
-        }
-
-        if (x != 0.0D) {
-            x = LithiumVoxelShapes.calculateSoftOffset(Direction.Axis.X, box, chunkCache, x, context, reusableStream.stream());
-
-            if (!boolean_1 && x != 0.0D) {
-                box = box.offset(x, 0.0D, 0.0D);
-            }
-        }
-
-        if (!boolean_1 && z != 0.0D) {
-            z = LithiumVoxelShapes.calculateSoftOffset(Direction.Axis.Z, box, chunkCache, z, context, reusableStream.stream());
-        }
-
-        return new Vec3d(x, y, z);
     }
 
 

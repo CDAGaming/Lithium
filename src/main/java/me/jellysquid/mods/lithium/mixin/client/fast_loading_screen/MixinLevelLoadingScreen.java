@@ -18,15 +18,13 @@ import java.util.IdentityHashMap;
 
 @Mixin(LevelLoadingScreen.class)
 public class MixinLevelLoadingScreen {
+    private static final Color4 NULL_STATUS_COLOR = Color4.fromRGBA(-16777216);
+    private static final Color4 DEFAULT_STATUS_COLOR = Color4.fromRGBA(-16772609);
     @Mutable
     @Shadow
     @Final
     private static Object2IntMap<ChunkStatus> STATUS_TO_COLOR;
-
     private static IdentityHashMap<ChunkStatus, Color4> STATUS_TO_COLOR_FAST;
-
-    private static final Color4 NULL_STATUS_COLOR = Color4.fromRGBA(-16777216);
-    private static final Color4 DEFAULT_STATUS_COLOR = Color4.fromRGBA(-16772609);
 
     /**
      * Significantly optimized implementation. This implementation differs from vanilla's in the following key ways.

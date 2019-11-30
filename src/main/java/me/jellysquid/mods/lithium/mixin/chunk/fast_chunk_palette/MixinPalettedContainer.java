@@ -19,39 +19,32 @@ import java.util.function.Function;
 @Mixin(value = PalettedContainer.class, priority = 999)
 public abstract class MixinPalettedContainer<T> implements LithiumPaletteResizeListener<T> {
     @Shadow
-    private Palette<T> palette;
-
-    @Shadow
     protected PackedIntegerArray data;
+    @Shadow
+    private Palette<T> palette;
+    @Shadow
+    private int paletteSize;
+    @Shadow
+    @Final
+    private Function<CompoundTag, T> elementDeserializer;
+    @Shadow
+    @Final
+    private Function<T, CompoundTag> elementSerializer;
+    @Shadow
+    @Final
+    private IdList<T> idList;
+    @Shadow
+    @Final
+    private Palette<T> fallbackPalette;
+    @Shadow
+    @Final
+    private T field_12935;
 
     @Shadow
     public abstract void unlock();
 
     @Shadow
     protected abstract void set(int int_1, T object_1);
-
-    @Shadow
-    private int paletteSize;
-
-    @Shadow
-    @Final
-    private Function<CompoundTag, T> elementDeserializer;
-
-    @Shadow
-    @Final
-    private Function<T, CompoundTag> elementSerializer;
-
-    @Shadow
-    @Final
-    private IdList<T> idList;
-
-    @Shadow
-    @Final
-    private Palette<T> fallbackPalette;
-
-    @Shadow
-    @Final
-    private T field_12935;
 
     @Shadow
     protected abstract T get(int int_1);

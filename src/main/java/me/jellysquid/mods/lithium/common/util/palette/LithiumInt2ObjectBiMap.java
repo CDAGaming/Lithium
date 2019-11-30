@@ -14,8 +14,8 @@ import static it.unimi.dsi.fastutil.Hash.FAST_LOAD_FACTOR;
 
 @SuppressWarnings("unchecked")
 public class LithiumInt2ObjectBiMap<K> implements IndexedIterable<K> {
-    private K[] lookupById;
     private final Object2IntMap<K> lookupByObj;
+    private K[] lookupById;
     private int size = 0;
 
     public LithiumInt2ObjectBiMap(int capacity) {

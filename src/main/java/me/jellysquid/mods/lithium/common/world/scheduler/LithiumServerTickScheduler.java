@@ -39,6 +39,23 @@ public class LithiumServerTickScheduler<T> extends ServerTickScheduler<T> {
         this.tickConsumer = consumer;
     }
 
+    public static <T> ListTag serializeScheduledTicks(Function<T, Identifier> function_1, Iterable<ScheduledTick<T>> ticks, long offset) {
+        ListTag listTag_1 = new ListTag();
+
+        for (ScheduledTick<T> tick : ticks) {
+            CompoundTag compoundTag_1 = new CompoundTag();
+            compoundTag_1.putString("i", function_1.apply(tick.getObject()).toString());
+            compoundTag_1.putInt("x", tick.pos.getX());
+            compoundTag_1.putInt("y", tick.pos.getY());
+            compoundTag_1.putInt("z", tick.pos.getZ());
+            compoundTag_1.putInt("t", (int) (tick.time - offset));
+            compoundTag_1.putInt("p", tick.priority.getPriorityIndex());
+            listTag_1.add(compoundTag_1);
+        }
+
+        return listTag_1;
+    }
+
     @Override
     public void tick() {
         this.world.getProfiler().push("cleaning");
@@ -128,23 +145,6 @@ public class LithiumServerTickScheduler<T> extends ServerTickScheduler<T> {
     public ListTag toTag(ChunkPos chunkPos) {
         List<ScheduledTick<T>> ticks = this.getScheduledTicksInChunk(chunkPos, false, true);
         return serializeScheduledTicks(this.idToName, ticks, this.world.getTime());
-    }
-
-    public static <T> ListTag serializeScheduledTicks(Function<T, Identifier> function_1, Iterable<ScheduledTick<T>> ticks, long offset) {
-        ListTag listTag_1 = new ListTag();
-
-        for (ScheduledTick<T> tick : ticks) {
-            CompoundTag compoundTag_1 = new CompoundTag();
-            compoundTag_1.putString("i", function_1.apply(tick.getObject()).toString());
-            compoundTag_1.putInt("x", tick.pos.getX());
-            compoundTag_1.putInt("y", tick.pos.getY());
-            compoundTag_1.putInt("z", tick.pos.getZ());
-            compoundTag_1.putInt("t", (int) (tick.time - offset));
-            compoundTag_1.putInt("p", tick.priority.getPriorityIndex());
-            listTag_1.add(compoundTag_1);
-        }
-
-        return listTag_1;
     }
 
     @Override
